@@ -1,6 +1,14 @@
+spring:
+  profiles:
+    active: dev #自定开发环境
+
 server:
   port: 80
+
+--- #dev 开发环境
 spring:
+  profiles: dev
+
   datasource:
     url: jdbc:mysql://localhost:3306/qdf?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
     username: root
@@ -9,4 +17,32 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+
+--- #test 测试环境
+spring:
+  profiles: test
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/qdf?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+
+--- #prod 生产环境
+spring:
+  profiles: prod
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/qdf?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
     database-platform: org.hibernate.dialect.MySQL5Dialect
