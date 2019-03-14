@@ -7,7 +7,7 @@ import org.hibernate.id.IdentifierGenerator;
 import java.io.Serializable;
 
 /**
- * The type Qdf id generator.
+ * 自定义ID生成器
  *
  * @author 张卜亢
  * @date 2019.03.07 13:16:22

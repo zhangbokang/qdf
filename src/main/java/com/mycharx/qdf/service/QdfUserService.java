@@ -69,4 +69,14 @@ public interface QdfUserService {
      * @date 2019.03.07 13:46:11
      */
     Page<QdfUser> findByPage(Pageable pageable);
+
+    /**
+     * Find by username qdf user.
+     *
+     * @param username the username
+     * @return the qdf user
+     * @author 张卜亢
+     * @date 2019.03.14 16:23:40
+     */
+    QdfUser findByUsername(String username);
 }

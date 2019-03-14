@@ -1,6 +1,7 @@
 package com.mycharx.qdf.service.impl;
 
 import com.mycharx.qdf.entity.QdfUser;
+import com.mycharx.qdf.exception.QdfCustomException;
 import com.mycharx.qdf.repostory.QdfUserRepostory;
 import com.mycharx.qdf.service.QdfUserService;
 import org.springframework.data.domain.Page;
@@ -50,5 +51,14 @@ public class QdfUserServiceImpl implements QdfUserService {
     @Override
     public Page<QdfUser> findByPage(Pageable pageable) {
         return qdfUserRepostory.findAll(pageable);
+    }
+
+    @Override
+    public QdfUser findByUsername(String username) {
+        try {
+            return qdfUserRepostory.findQdfUserByUsername(username);
+        } catch (Exception e) {
+            throw new QdfCustomException("查询用户错误");
+        }
     }
 }
