@@ -2,14 +2,14 @@ package com.mycharx.qdf.shiro;
 
 import org.apache.shiro.authc.AuthenticationToken;
 
-public class JWTToken implements AuthenticationToken {
+public class JwtToken implements AuthenticationToken {
 
     /**
      * 密钥
       */
     private String token;
 
-    public JWTToken(String token) {
+    public JwtToken(String token) {
         this.token = token;
     }
 

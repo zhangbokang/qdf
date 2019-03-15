@@ -1,8 +1,12 @@
 package com.mycharx.qdf.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.mycharx.qdf.entity.QdfRole;
 import com.mycharx.qdf.entity.QdfUser;
+import com.mycharx.qdf.entity.jsonview.SimpleUserView;
+import com.mycharx.qdf.service.QdfRoleService;
 import com.mycharx.qdf.service.QdfUserService;
+import com.mycharx.qdf.utils.StrUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +31,7 @@ public class QdfUserController {
     private QdfUserService qdfUserService;
 
     @RequestMapping("/save")
-    @JsonView(QdfUser.SimpleView.class)
+    @JsonView(SimpleUserView.class)
     public QdfUser save(@RequestBody QdfUser qdfUser) {
         return qdfUserService.save(qdfUser);
     }
@@ -38,20 +42,32 @@ public class QdfUserController {
     }
 
     @RequestMapping("/find/{id}")
-    @JsonView(QdfUser.SimpleView.class)
+    @JsonView(SimpleUserView.class)
     public QdfUser findById(@PathVariable("id") Long id) {
         return qdfUserService.findById(id);
     }
 
     @RequestMapping("/find")
-    @JsonView(QdfUser.SimpleView.class)
+    @JsonView(SimpleUserView.class)
     public List<QdfUser> findAll() {
         return qdfUserService.findAll();
     }
 
     @RequestMapping("/findpage")
-    @JsonView(QdfUser.SimpleView.class)
+    @JsonView(SimpleUserView.class)
     public Page<QdfUser> findPage(Pageable pageable) {
         return qdfUserService.findByPage(pageable);
+    }
+
+    @RequestMapping("/addrole")
+    @JsonView(SimpleUserView.class)
+    public QdfUser addRoles(Long userId, String roleIds) {
+        return qdfUserService.addRoles(userId, StrUtil.strToLongSet(roleIds));
+    }
+
+    @RequestMapping("/delrole")
+    @JsonView(SimpleUserView.class)
+    public QdfUser delRoles(Long userId, String roleIds) {
+        return qdfUserService.delRoles(userId, StrUtil.strToLongSet(roleIds));
     }
 }

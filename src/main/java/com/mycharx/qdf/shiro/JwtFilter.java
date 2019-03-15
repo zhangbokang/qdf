@@ -18,7 +18,7 @@ import java.io.IOException;
  * @author 张卜亢
  * @date 2019.03.14 16:12:21
  */
-public class JWTFilter extends BasicHttpAuthenticationFilter {
+public class JwtFilter extends BasicHttpAuthenticationFilter {
 
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -41,7 +41,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String authorization = httpServletRequest.getHeader("Authorization");
 
-        JWTToken token = new JWTToken(authorization);
+        JwtToken token = new JwtToken(authorization);
         // 提交给realm进行登入，如果错误他会抛出异常并被捕获
         getSubject(request, response).login(token);
         // 如果没有抛出异常则代表登入成功，返回true

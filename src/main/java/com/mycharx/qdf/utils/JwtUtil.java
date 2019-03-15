@@ -8,17 +8,17 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.util.Date;
 
-//import java.io.UnsupportedEncodingException;
-
 /**
  * The type Jwt util.
  *
  * @author 张卜亢
  * @date 2019.03.14 13:32:29
  */
-public class JWTUtil {
+public class JwtUtil {
 
-    // 过期时间5分钟
+    /**
+     * 过期时间5分钟
+      */
     private static final long EXPIRE_TIME = 5*60*1000;
 
     /**
@@ -33,7 +33,7 @@ public class JWTUtil {
             JWTVerifier verifier = JWT.require(algorithm)
                     .withClaim("username", username)
                     .build();
-            DecodedJWT jwt = verifier.verify(token);
+            verifier.verify(token);
             return true;
         } catch (Exception exception) {
             return false;

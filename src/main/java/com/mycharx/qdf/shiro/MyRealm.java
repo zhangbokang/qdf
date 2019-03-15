@@ -4,7 +4,8 @@ import com.mycharx.qdf.entity.QdfPermission;
 import com.mycharx.qdf.entity.QdfRole;
 import com.mycharx.qdf.entity.QdfUser;
 import com.mycharx.qdf.service.QdfUserService;
-import com.mycharx.qdf.utils.JWTUtil;
+import com.mycharx.qdf.utils.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -15,6 +16,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,10 +27,9 @@ import javax.annotation.Resource;
  * @author 张卜亢
  * @date 2019.03.14 13:38:17
  */
-@Service
+@Slf4j
+@Component
 public class MyRealm extends AuthorizingRealm {
-
-    private static final Logger _logger = LoggerFactory.getLogger(MyRealm.class);
 
     @Resource
     private QdfUserService qdfUserService;
@@ -38,7 +39,7 @@ public class MyRealm extends AuthorizingRealm {
      */
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof JWTToken;
+        return token instanceof JwtToken;
     }
 
     /**
@@ -53,12 +54,11 @@ public class MyRealm extends AuthorizingRealm {
          * 当放到缓存中时，这样的话，doGetAuthorizationInfo就只会执行一次了，
          * 缓存过期之后会再次执行。
          */
-        _logger.info("权限配置-->MyRealm.doGetAuthorizationInfo()");
+        log.info("权限配置-->MyRealm.doGetAuthorizationInfo()");
 
-        String username = JWTUtil.getUsername(principals.toString());
+        String username = JwtUtil.getUsername(principals.toString());
         QdfUser user = qdfUserService.findByUsername(username);
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-//        simpleAuthorizationInfo.addRole(user.getRole());
         //设置相应角色的权限信息
         for (QdfRole role : user.getRoles()) {
             //设置角色
@@ -68,16 +68,7 @@ public class MyRealm extends AuthorizingRealm {
                 simpleAuthorizationInfo.addStringPermission(p.getPermission());
             }
         }
-//        Set<String> permission = new HashSet<>(Arrays.asList(user.getPermission().split(",")));
-//        simpleAuthorizationInfo.addStringPermissions(permission);
         return simpleAuthorizationInfo;
-
-//        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-//        ManagerInfo managerInfo = (ManagerInfo) principals.getPrimaryPrincipal();
-//
-//
-//
-//        return authorizationInfo;
     }
 
     /**
@@ -87,20 +78,17 @@ public class MyRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
         String token = (String) auth.getCredentials();
         // 解密获得username，用于和数据库进行对比
-        String username = JWTUtil.getUsername(token);
+        String username = JwtUtil.getUsername(token);
         if (username == null) {
             throw new AuthenticationException("token invalid");
         }
 
         QdfUser qdfUser = qdfUserService.findByUsername(username);
-        if (qdfUser == null) {
-            throw new AuthenticationException("User didn't existed!");
-        }
 
-        if (! JWTUtil.verify(token, username, qdfUser.getPassword())) {
+        if (! JwtUtil.verify(token, username, qdfUser.getPassword())) {
             throw new AuthenticationException("Username or password error");
         }
 
-        return new SimpleAuthenticationInfo(token, token, "my_realm");
+        return new SimpleAuthenticationInfo(token, token, this.getName());
     }
 }

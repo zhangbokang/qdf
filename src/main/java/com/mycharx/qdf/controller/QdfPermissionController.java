@@ -1,6 +1,8 @@
 package com.mycharx.qdf.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.mycharx.qdf.entity.QdfPermission;
+import com.mycharx.qdf.entity.jsonview.SimpleUserView;
 import com.mycharx.qdf.service.QdfPermissionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ public class QdfPermissionController {
     private QdfPermissionService qdfPermissionService;
 
     @RequestMapping("/save")
+    @JsonView(SimpleUserView.class)
     public QdfPermission save(@RequestBody QdfPermission qdfPermission) {
         return qdfPermissionService.save(qdfPermission);
     }
@@ -36,16 +39,19 @@ public class QdfPermissionController {
     }
 
     @RequestMapping("/find/{id}")
+    @JsonView(SimpleUserView.class)
     public QdfPermission findById(@PathVariable("id") Long id) {
         return qdfPermissionService.findById(id);
     }
 
     @RequestMapping("/find")
+    @JsonView(SimpleUserView.class)
     public List<QdfPermission> findAll() {
         return qdfPermissionService.findAll();
     }
 
     @RequestMapping("/findpage")
+    @JsonView(SimpleUserView.class)
     public Page<QdfPermission> findPage(Pageable pageable) {
         return qdfPermissionService.findByPage(pageable);
     }

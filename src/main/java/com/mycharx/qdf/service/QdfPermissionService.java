@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * The interface Qdf permission service.
@@ -69,4 +70,14 @@ public interface QdfPermissionService {
      * @date 2019.03.14 23:21:42
      */
     Page<QdfPermission> findByPage(Pageable pageable);
+
+    /**
+     * Find all by id list.
+     *
+     * @param ids the ids
+     * @return the list
+     * @author 张卜亢
+     * @date 2019.03.15 16:55:56
+     */
+    List<QdfPermission> findAllById(Set<Long> ids);
 }

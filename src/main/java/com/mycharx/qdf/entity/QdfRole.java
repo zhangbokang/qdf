@@ -1,5 +1,7 @@
 package com.mycharx.qdf.entity;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.mycharx.qdf.entity.jsonview.SimpleUserView;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -27,22 +29,27 @@ public class QdfRole implements Serializable {
     @Id
     @GeneratedValue(generator = "idGenerator")
     @GenericGenerator(name = "idGenerator", strategy = "com.mycharx.qdf.common.QdfIdGenerator")
+    @JsonView(SimpleUserView.class)
     private Long id;
     /**
      * 角色名称
      */
+    @JsonView(SimpleUserView.class)
     private String role;
     /**
      * 角色说明
      */
+    @JsonView(SimpleUserView.class)
     private String description;
     /**
      * 创建时间
      */
+    @JsonView(SimpleUserView.class)
     private Date createdTime;
     /**
      * 更新时间
      */
+    @JsonView(SimpleUserView.class)
     private Date updatedTime;
 
     /**
@@ -55,6 +62,7 @@ public class QdfRole implements Serializable {
             joinColumns = @JoinColumn(name = "role_id"),//关联本类的ID
             inverseJoinColumns = @JoinColumn(name = "user_id")//关联对方类的ID
     )
+    @Transient
     private Set<QdfUser> users = new HashSet<>();
 
     /**
@@ -67,5 +75,6 @@ public class QdfRole implements Serializable {
             joinColumns = @JoinColumn(name = "role_id"),//关联本类的ID
             inverseJoinColumns = @JoinColumn(name = "permission_id")//关联对方类的ID
     )
+    @JsonView(SimpleUserView.class)
     private Set<QdfPermission> permissions = new HashSet<>();
 }

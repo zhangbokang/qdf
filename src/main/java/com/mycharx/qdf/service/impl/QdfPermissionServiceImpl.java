@@ -4,7 +4,7 @@ import com.mycharx.qdf.entity.QdfPermission;
 import com.mycharx.qdf.exception.QdfCustomException;
 import com.mycharx.qdf.repostory.QdfPermissionRepostory;
 import com.mycharx.qdf.service.QdfPermissionService;
-import com.mycharx.qdf.utils.BeanUtils;
+import com.mycharx.qdf.utils.BeanUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * The type Qdf permission service.
@@ -33,7 +34,7 @@ public class QdfPermissionServiceImpl implements QdfPermissionService {
         } else {
             Optional<QdfPermission> o = qdfPermissionRepostory.findById(qdfPermission.getId());
             if (o.isPresent()) {
-                BeanUtils.copyNonNullProperties(qdfPermission, o.get());
+                BeanUtil.copyNonNullProperties(qdfPermission, o.get());
                 return qdfPermissionRepostory.save(o.get());
             }
             throw new QdfCustomException("更新错误，未找到权限");
@@ -63,5 +64,10 @@ public class QdfPermissionServiceImpl implements QdfPermissionService {
     @Override
     public Page<QdfPermission> findByPage(Pageable pageable) {
         return qdfPermissionRepostory.findAll(pageable);
+    }
+
+    @Override
+    public List<QdfPermission> findAllById(Set<Long> ids) {
+        return qdfPermissionRepostory.findAllById(ids);
     }
 }

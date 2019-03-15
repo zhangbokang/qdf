@@ -4,7 +4,7 @@ import com.mycharx.qdf.controller.common.ResponseBean;
 import com.mycharx.qdf.entity.QdfUser;
 import com.mycharx.qdf.exception.UnauthorizedException;
 import com.mycharx.qdf.service.QdfUserService;
-import com.mycharx.qdf.utils.JWTUtil;
+import com.mycharx.qdf.utils.JwtUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -37,7 +37,7 @@ public class QdfWebController {
                               @RequestParam("password") String password) {
         QdfUser qdfUser = qdfUserService.findByUsername(username);
         if (qdfUser.getPassword().equals(password)) {
-            return new ResponseBean(200, "Login success", JWTUtil.sign(username, password));
+            return new ResponseBean(200, "Login success", JwtUtil.sign(username, password));
         } else {
             throw new UnauthorizedException();
         }
@@ -61,6 +61,7 @@ public class QdfWebController {
 
     @GetMapping("/require_role")
     @RequiresRoles("admin")
+    @RequiresPermissions(logical = Logical.AND, value = {"view"})
     public ResponseBean requireRole() {
         return new ResponseBean(200, "You are visiting require_role", null);
     }

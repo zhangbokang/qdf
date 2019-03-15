@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * The interface Qdf role service.
@@ -69,4 +70,25 @@ public interface QdfRoleService {
      * @date 2019.03.14 23:20:11
      */
     Page<QdfRole> findByPage(Pageable pageable);
+
+    /**
+     * Find all by id list.
+     *
+     * @param ids the ids
+     * @return the list
+     * @author 张卜亢
+     * @date 2019.03.15 16:43:48
+     */
+    List<QdfRole> findAllById(Set<Long> ids);
+
+    /**
+     * Add permissions qdf role.
+     *
+     * @param roleId        the role id
+     * @param permissionIds the permission ids
+     * @return the qdf role
+     * @author 张卜亢
+     * @date 2019.03.15 16:55:10
+     */
+    QdfRole addPermissions(Long roleId, Set<Long> permissionIds);
 }
