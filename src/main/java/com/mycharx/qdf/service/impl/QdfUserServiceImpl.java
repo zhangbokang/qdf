@@ -4,12 +4,14 @@ import com.mycharx.qdf.entity.QdfUser;
 import com.mycharx.qdf.exception.QdfCustomException;
 import com.mycharx.qdf.repostory.QdfUserRepostory;
 import com.mycharx.qdf.service.QdfUserService;
+import com.mycharx.qdf.utils.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The type Qdf user service.
@@ -25,7 +27,17 @@ public class QdfUserServiceImpl implements QdfUserService {
 
     @Override
     public QdfUser save(QdfUser qdfUser) {
-        return qdfUserRepostory.save(qdfUser);
+        //如果id不为空，则执行更新操作
+        if (qdfUser.getId() == null) {
+            return qdfUserRepostory.save(qdfUser);
+        } else {
+            Optional<QdfUser> o = qdfUserRepostory.findById(qdfUser.getId());
+            if (o.isPresent()) {
+                BeanUtils.copyNonNullProperties(qdfUser, o.get());
+                return qdfUserRepostory.save(o.get());
+            }
+            throw new QdfCustomException("更新错误，未找到用户");
+        }
     }
 
     @Override
