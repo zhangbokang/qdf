@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -54,7 +55,7 @@ public class QdfRole implements Serializable {
             joinColumns = @JoinColumn(name = "role_id"),//关联本类的ID
             inverseJoinColumns = @JoinColumn(name = "user_id")//关联对方类的ID
     )
-    private Set<QdfUser> users;
+    private Set<QdfUser> users = new HashSet<>();
 
     /**
      * 角色的权限
@@ -66,5 +67,5 @@ public class QdfRole implements Serializable {
             joinColumns = @JoinColumn(name = "role_id"),//关联本类的ID
             inverseJoinColumns = @JoinColumn(name = "permission_id")//关联对方类的ID
     )
-    private Set<QdfPermission> permissions;
+    private Set<QdfPermission> permissions = new HashSet<>();
 }
