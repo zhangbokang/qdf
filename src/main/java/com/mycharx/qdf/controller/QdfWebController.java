@@ -2,7 +2,6 @@ package com.mycharx.qdf.controller;
 
 import com.mycharx.qdf.controller.common.ResponseBean;
 import com.mycharx.qdf.entity.QdfUser;
-import com.mycharx.qdf.exception.UnauthorizedException;
 import com.mycharx.qdf.service.QdfUserService;
 import com.mycharx.qdf.utils.JwtUtil;
 import org.apache.shiro.SecurityUtils;
@@ -35,12 +34,10 @@ public class QdfWebController {
     @PostMapping("/login")
     public ResponseBean login(@RequestParam("username") String username,
                               @RequestParam("password") String password) {
-        QdfUser qdfUser = qdfUserService.findByUsername(username);
-        if (qdfUser.getPassword().equals(password)) {
-            return new ResponseBean(200, "Login success", JwtUtil.sign(username, password));
-        } else {
-            throw new UnauthorizedException();
-        }
+        QdfUser qdfUser = qdfUserService.checkLogin(username, password);
+
+            return new ResponseBean(200, "Login success",
+                    JwtUtil.sign(qdfUser.getUsername(), qdfUser.getPassword()));
     }
 
     @GetMapping("/article")

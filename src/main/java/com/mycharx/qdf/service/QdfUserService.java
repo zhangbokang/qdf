@@ -112,4 +112,17 @@ public interface QdfUserService {
      * @date 2019.03.15 17:10:25
      */
     QdfUser delRoles(Long userId, Set<Long> roleIds);
+
+    /**
+     * Check login qdf user.
+     *
+     * @param username the username
+     * @param password the password
+     * @return the qdf user
+     * @author 张卜亢
+     * @date 2019.03.15 19:15:37
+     */
+    QdfUser checkLogin(String username, String password);
+
+
 }

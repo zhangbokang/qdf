@@ -1,16 +1,18 @@
 package com.mycharx.qdf.service.impl;
 
-import com.mycharx.qdf.entity.QdfRole;
 import com.mycharx.qdf.entity.QdfUser;
 import com.mycharx.qdf.exception.QdfCustomException;
+import com.mycharx.qdf.exception.UnauthorizedException;
 import com.mycharx.qdf.repostory.QdfUserRepostory;
 import com.mycharx.qdf.service.QdfRoleService;
 import com.mycharx.qdf.service.QdfUserService;
 import com.mycharx.qdf.utils.BeanUtil;
 import org.apache.shiro.authc.AuthenticationException;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -34,8 +36,9 @@ public class QdfUserServiceImpl implements QdfUserService {
 
     @Override
     public QdfUser save(QdfUser qdfUser) {
-        //如果id不为空，则执行更新操作
+        //如果id为空，则执行保存操作，否则执行更新操作
         if (qdfUser.getId() == null) {
+            qdfUser.setPassword(BCrypt.hashpw(qdfUser.getPassword(), BCrypt.gensalt()));
             return qdfUserRepostory.save(qdfUser);
         } else {
             Optional<QdfUser> o = qdfUserRepostory.findById(qdfUser.getId());
@@ -98,5 +101,20 @@ public class QdfUserServiceImpl implements QdfUserService {
         QdfUser qdfUser = this.findById(userId);
         qdfUser.getRoles().removeAll(qdfRoleService.findAllById(roleIds));
         return this.save(qdfUser);
+    }
+
+    @Override
+    public QdfUser checkLogin(String username, String password) {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+            throw new QdfCustomException("用户名和密码不能为空");
+        }
+        QdfUser qdfUser = new QdfUser();
+        qdfUser.setUsername(username);
+        qdfUser.setPassword(password);
+        QdfUser q = this.findByUsername(qdfUser.getUsername());
+        if (!BCrypt.checkpw(qdfUser.getPassword(), q.getPassword())) {
+            throw new UnauthorizedException("用户名或密码错误");
+        }
+        return q;
     }
 }

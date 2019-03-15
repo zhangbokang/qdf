@@ -48,10 +48,6 @@ public class QdfUser implements Serializable {
      */
     private String password;
     /**
-     * md5密码盐
-     */
-    private String salt;
-    /**
      * 联系电话
      */
     @JsonView(SimpleUserView.class)
