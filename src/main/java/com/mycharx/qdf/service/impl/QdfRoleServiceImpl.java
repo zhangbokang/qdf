@@ -1,14 +1,17 @@
 package com.mycharx.qdf.service.impl;
 
 import com.mycharx.qdf.entity.QdfRole;
+import com.mycharx.qdf.exception.QdfCustomException;
 import com.mycharx.qdf.repostory.QdfRoleRepostory;
 import com.mycharx.qdf.service.QdfRoleService;
+import com.mycharx.qdf.utils.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The type Qdf role service.
@@ -24,7 +27,17 @@ public class QdfRoleServiceImpl implements QdfRoleService {
 
     @Override
     public QdfRole save(QdfRole qdfRole) {
-        return qdfRoleRepostory.save(qdfRole);
+        //如果id不为空，则执行更新操作
+        if (qdfRole.getId() == null) {
+            return qdfRoleRepostory.save(qdfRole);
+        } else {
+            Optional<QdfRole> o = qdfRoleRepostory.findById(qdfRole.getId());
+            if (o.isPresent()) {
+                BeanUtils.copyNonNullProperties(qdfRole, o.get());
+                return qdfRoleRepostory.save(o.get());
+            }
+            throw new QdfCustomException("更新错误，未找到角色");
+        }
     }
 
     @Override

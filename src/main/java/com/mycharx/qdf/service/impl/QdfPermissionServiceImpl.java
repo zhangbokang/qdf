@@ -1,14 +1,17 @@
 package com.mycharx.qdf.service.impl;
 
 import com.mycharx.qdf.entity.QdfPermission;
+import com.mycharx.qdf.exception.QdfCustomException;
 import com.mycharx.qdf.repostory.QdfPermissionRepostory;
 import com.mycharx.qdf.service.QdfPermissionService;
+import com.mycharx.qdf.utils.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The type Qdf permission service.
@@ -24,7 +27,17 @@ public class QdfPermissionServiceImpl implements QdfPermissionService {
 
     @Override
     public QdfPermission save(QdfPermission qdfPermission) {
-        return qdfPermissionRepostory.save(qdfPermission);
+        //如果id不为空，则执行更新操作
+        if (qdfPermission.getId() == null) {
+            return qdfPermissionRepostory.save(qdfPermission);
+        } else {
+            Optional<QdfPermission> o = qdfPermissionRepostory.findById(qdfPermission.getId());
+            if (o.isPresent()) {
+                BeanUtils.copyNonNullProperties(qdfPermission, o.get());
+                return qdfPermissionRepostory.save(o.get());
+            }
+            throw new QdfCustomException("更新错误，未找到权限");
+        }
     }
 
     @Override
