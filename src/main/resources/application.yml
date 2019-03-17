@@ -81,9 +81,40 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5Dialect
 
 myshiro:
-  redishost: 127.0.0.1:6379
-  timeout: 300
-  password:
+  #Redis服务器配置
+  redis:
+    # Redis服务器地址
+    host: 127.0.0.1
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码（默认为空）
+    password:
+    # 连接超时时间（毫秒）
+    timeout: 10000
+    pool:
+      # 连接池最大连接数（使用负值表示没有限制）
+      max-active: 200
+      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-wait: -1
+      # 连接池中的最大空闲连接
+      max-idle: 8
+      # 连接池中的最小空闲连接
+      min-idle: 0
+  #shiro和jwt相关的配置
+  shiro:
+    #
+    redis-cache-key: "shiro:cache:"
+    jwt-cache-key: "jwt:cache:"
+    # AES密码加密私钥(Base64加密)
+    encryptAESKey: V2FuZzkyNjQ1NGRTQkFQSUpXVA==
+    # JWT认证加密私钥(Base64加密)
+    encryptJWTKey: U0JBUElKV1RkV2FuZzkyNjQ1NA==
+    # AccessToken过期时间-5分钟-5*60(秒为单位)
+    accessTokenExpireTime: 50
+    # RefreshToken过期时间-30分钟-30*60(秒为单位)
+    refreshTokenExpireTime: 200
+    # Shiro缓存过期时间-5分钟-5*60(秒为单位)(一般设置与AccessToken过期时间一致)
+    shiroCacheExpireTime: 50
 
 server:
   port: 8080
@@ -107,9 +138,40 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5Dialect
 
 myshiro:
-  redishost: 127.0.0.1:6379
-  timeout: 300
-  password:
+  #Redis服务器配置
+  redis:
+    # Redis服务器地址
+    host: 127.0.0.1
+    # Redis服务器连接端口
+    port: 6379
+    # Redis服务器连接密码（默认为空）
+    password:
+    # 连接超时时间（毫秒）
+    timeout: 10000
+    pool:
+      # 连接池最大连接数（使用负值表示没有限制）
+      max-active: 200
+      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-wait: -1
+      # 连接池中的最大空闲连接
+      max-idle: 8
+      # 连接池中的最小空闲连接
+      min-idle: 0
+  #shiro和jwt相关的配置
+  shiro:
+    #
+    redis-cache-key: "shiro:cache:"
+    jwt-cache-key: "jwt:cache:"
+    # AES密码加密私钥(Base64加密)
+    encryptAESKey: V2FuZzkyNjQ1NGRTQkFQSUpXVA==
+    # JWT认证加密私钥(Base64加密)
+    encryptJWTKey: U0JBUElKV1RkV2FuZzkyNjQ1NA==
+    # AccessToken过期时间-5分钟-5*60(秒为单位)
+    accessTokenExpireTime: 50
+    # RefreshToken过期时间-30分钟-30*60(秒为单位)
+    refreshTokenExpireTime: 200
+    # Shiro缓存过期时间-5分钟-5*60(秒为单位)(一般设置与AccessToken过期时间一致)
+    shiroCacheExpireTime: 50
 
 server:
   port: 8080
