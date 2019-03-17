@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 一些比较基础比较公共的controller
@@ -58,8 +59,10 @@ public class QdfWebController {
     }
 
     @GetMapping("/article")
-    public ResponseBean article() {
+    public ResponseBean article(HttpServletRequest request) {
         Subject subject = SecurityUtils.getSubject();
+//        subject.checkPermission(request.getRequestURI());
+        subject.checkPermission(request.getServletPath());
         if (subject.isAuthenticated()) {
             return new ResponseBean(200, "You are already logged in", null);
         } else {

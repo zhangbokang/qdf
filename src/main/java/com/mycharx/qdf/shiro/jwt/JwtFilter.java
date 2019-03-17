@@ -3,9 +3,7 @@ package com.mycharx.qdf.shiro.jwt;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.mycharx.qdf.common.Constant;
-import com.mycharx.qdf.common.JsonConvertUtil;
 import com.mycharx.qdf.controller.common.ResponseBean;
-import com.mycharx.qdf.exception.QdfCustomException;
 import com.mycharx.qdf.utils.JedisUtil;
 import com.mycharx.qdf.utils.JwtUtil;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
@@ -18,8 +16,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * The type Jwt filter.
@@ -179,7 +175,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                   一般使用第二种(更方便)
                  */
                 // 直接返回Response信息
-                this.response401(request, response, msg);
+                ResponseBean.response401(request, response, msg);
                 return false;
             }
         }
@@ -204,20 +200,4 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         return super.preHandle(request, response);
     }
 
-    /**
-     * 将非法请求跳转到 /401
-     */
-    private void response401(ServletRequest req, ServletResponse resp, String msg) {
-        HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
-        httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-        httpServletResponse.setCharacterEncoding("UTF-8");
-        httpServletResponse.setContentType("application/json; charset=utf-8");
-        try (PrintWriter out = httpServletResponse.getWriter()) {
-            String data = JsonConvertUtil.objectToJson(new ResponseBean(HttpStatus.UNAUTHORIZED.value(), "无权访问(Unauthorized):" + msg, null));
-            out.append(data);
-        } catch (IOException e) {
-            LOGGER.error("直接返回Response信息出现IOException异常:" + e.getMessage());
-            throw new QdfCustomException("直接返回Response信息出现IOException异常:" + e.getMessage());
-        }
-    }
 }

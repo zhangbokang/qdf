@@ -2,12 +2,12 @@ package com.mycharx.qdf.service.impl;
 
 import com.mycharx.qdf.entity.QdfUser;
 import com.mycharx.qdf.exception.QdfCustomException;
-import com.mycharx.qdf.exception.UnauthorizedException;
 import com.mycharx.qdf.repostory.QdfUserRepostory;
 import com.mycharx.qdf.service.QdfRoleService;
 import com.mycharx.qdf.service.QdfUserService;
 import com.mycharx.qdf.utils.BeanUtil;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
