@@ -3,6 +3,7 @@ package com.mycharx.qdf.controller;
 import com.mycharx.qdf.controller.common.ResponseBean;
 import com.mycharx.qdf.entity.QdfUser;
 import com.mycharx.qdf.service.QdfUserService;
+import com.mycharx.qdf.utils.JedisUtil;
 import com.mycharx.qdf.utils.JwtUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -12,6 +13,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,13 +33,28 @@ public class QdfWebController {
     @Resource
     private QdfUserService qdfUserService;
 
+    /**
+     * RefreshToken过期时间
+     */
+    @Value("${myshiro.shiro.refreshTokenExpireTime}")
+    private String refreshTokenExpireTime;
+
+    @Value("${myshiro.shiro.jwt-cache-key}")
+    private String jwtCacheKeyPrefix;
+
     @PostMapping("/login")
     public ResponseBean login(@RequestParam("username") String username,
                               @RequestParam("password") String password) {
         QdfUser qdfUser = qdfUserService.checkLogin(username, password);
-
-            return new ResponseBean(200, "Login success",
-                    JwtUtil.sign(qdfUser.getUsername(), qdfUser.getPassword()));
+        // 设置RefreshToken，时间戳为当前时间戳，直接设置即可(不用先删后设，会覆盖已有的RefreshToken)
+        String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+        JedisUtil.setObject(jwtCacheKeyPrefix + qdfUser.getUsername(), currentTimeMillis, Integer.parseInt(refreshTokenExpireTime));
+        // 从Header中Authorization返回AccessToken，时间戳为当前时间戳
+        String token = JwtUtil.sign(qdfUser.getUsername(), currentTimeMillis);
+//        httpServletResponse.setHeader("Authorization", token);
+//        httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authorization");
+//        return new ResponseBean(HttpStatus.OK.value(), "登录成功(Login Success.)", null);
+        return new ResponseBean(200, "Login success", token);
     }
 
     @GetMapping("/article")

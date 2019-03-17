@@ -1,6 +1,7 @@
 package com.mycharx.qdf.controller.common;
 
 import com.mycharx.qdf.exception.UnauthorizedException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.ShiroException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author 张卜亢
  * @date 2019.03.14 16:21:53
  */
+@Slf4j
 @RestControllerAdvice
 public class QdfExceptionController {
 
@@ -27,6 +29,7 @@ public class QdfExceptionController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ShiroException.class)
     public ResponseBean handle401(ShiroException e) {
+        log.error(e.getMessage(),e);
         return new ResponseBean(401, e.getMessage(), null);
     }
 
@@ -37,7 +40,8 @@ public class QdfExceptionController {
      */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseBean handle401() {
+    public ResponseBean handle401(UnauthorizedException e) {
+        log.error(e.getMessage(),e);
         return new ResponseBean(401, "Unauthorized", null);
     }
 
@@ -51,6 +55,7 @@ public class QdfExceptionController {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseBean globalException(HttpServletRequest request, Throwable ex) {
+        log.error(ex.getMessage(),ex);
         return new ResponseBean(getStatus(request).value(), ex.getMessage(), null);
     }
 

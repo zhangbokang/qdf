@@ -1,9 +1,14 @@
 package com.mycharx.qdf.shiro;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.mycharx.qdf.common.Constant;
+import com.mycharx.qdf.common.StringUtil;
 import com.mycharx.qdf.entity.QdfPermission;
 import com.mycharx.qdf.entity.QdfRole;
 import com.mycharx.qdf.entity.QdfUser;
 import com.mycharx.qdf.service.QdfUserService;
+import com.mycharx.qdf.shiro.jwt.JwtToken;
+import com.mycharx.qdf.utils.JedisUtil;
 import com.mycharx.qdf.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -12,12 +17,11 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
@@ -33,6 +37,9 @@ public class MyRealm extends AuthorizingRealm {
 
     @Resource
     private QdfUserService qdfUserService;
+
+    @Value("${myshiro.shiro.jwt-cache-key}")
+    private String jwtCacheKeyPrefix;
 
     /**
      * 大坑！，必须重写此方法，不然Shiro会报错
@@ -79,16 +86,37 @@ public class MyRealm extends AuthorizingRealm {
         String token = (String) auth.getCredentials();
         // 解密获得username，用于和数据库进行对比
         String username = JwtUtil.getUsername(token);
-        if (username == null) {
-            throw new AuthenticationException("token invalid");
+        // 帐号为空
+        if (StringUtil.isBlank(username)) {
+            throw new AuthenticationException("Token中帐号为空(The account in Token is empty.)");
         }
 
         QdfUser qdfUser = qdfUserService.findByUsername(username);
 
-        if (! JwtUtil.verify(token, username, qdfUser.getPassword())) {
-            throw new AuthenticationException("Username or password error");
+        if (qdfUser == null) {
+            throw new AuthenticationException("该帐号不存在(The account does not exist.)");
         }
 
-        return new SimpleAuthenticationInfo(token, token, this.getName());
+//        if (!JwtUtil.verify(token)) {
+//            throw new AuthenticationException("Username or password error");
+//        }
+
+        //这里将 密码对比 注销掉,否则 无法锁定  要将密码对比 交给 密码比较器
+        if (qdfUser.getState() == 1) {
+            throw new UnauthorizedException("账号已被禁用,请联系管理员！");
+        }
+
+        // 开始认证，要AccessToken认证通过，且Redis中存在RefreshToken，且两个Token时间戳一致
+        if (JwtUtil.verify(token) && JedisUtil.exists(jwtCacheKeyPrefix + username)) {
+            // 获取RefreshToken的时间戳
+            String currentTimeMillisRedis = JedisUtil.getObject(jwtCacheKeyPrefix + username).toString();
+            // 获取AccessToken时间戳，与RefreshToken的时间戳对比
+            if (JwtUtil.getClaim(token, Constant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)) {
+//                return new SimpleAuthenticationInfo(token, token, "userRealm");
+                return new SimpleAuthenticationInfo(token, token, this.getName());
+            }
+        }
+        throw new TokenExpiredException("Token已过期(Token expired or incorrect.)");
     }
+
 }

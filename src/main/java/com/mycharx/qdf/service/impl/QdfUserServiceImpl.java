@@ -39,6 +39,10 @@ public class QdfUserServiceImpl implements QdfUserService {
         //如果id为空，则执行保存操作，否则执行更新操作
         if (qdfUser.getId() == null) {
             qdfUser.setPassword(BCrypt.hashpw(qdfUser.getPassword(), BCrypt.gensalt()));
+            //如果没有设置状态默认为 0:正常
+            if (qdfUser.getState() == null) {
+                qdfUser.setState(0);
+            }
             return qdfUserRepostory.save(qdfUser);
         } else {
             Optional<QdfUser> o = qdfUserRepostory.findById(qdfUser.getId());

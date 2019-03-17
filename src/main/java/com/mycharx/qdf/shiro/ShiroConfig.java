@@ -1,5 +1,7 @@
 package com.mycharx.qdf.shiro;
 
+import com.mycharx.qdf.shiro.cache.QdfRedisCacheManager;
+import com.mycharx.qdf.shiro.jwt.JwtFilter;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
@@ -7,6 +9,7 @@ import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSource
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -18,12 +21,31 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
+    /**
+     * RefreshToken过期时间-30分钟-30*60(秒为单位)
+     */
+//    @Value("${myshiro.shiro.refreshTokenExpireTime}")
+//    private Integer refreshTokenExpireTime;
+
+//    @Value("${myshiro.shiro.jwt-cache-key}")
+//    private String jwtCacheKeyPrefix;
+
     @Bean("securityManager")
-    public DefaultWebSecurityManager getManager(MyRealm realm) {
+    public DefaultWebSecurityManager getManager(MyRealm realm, QdfRedisCacheManager qdfRedisCacheManager) {
+//        realm.setCachingEnabled(true);
+//        //启用身份验证缓存，即缓存AuthenticationInfo信息，默认false
+//        realm.setAuthenticationCachingEnabled(true);
+//        //缓存AuthenticationInfo信息的缓存名称
+//        realm.setAuthenticationCacheName("authenticationCache");
+        //启用授权缓存，即缓存AuthorizationInfo信息，默认false
+//        realm.setAuthorizationCachingEnabled(true);
+//        //缓存AuthorizationInfo信息的缓存名称
+//        realm.setAuthorizationCacheName("authorizationCache");
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
         // 使用自己的realm
         manager.setRealm(realm);
-
+        // 设置自定义Cache缓存
+//        manager.setCacheManager(qdfRedisCacheManager);
         /*
          * 关闭shiro自带的session，详情见文档
          * http://shiro.apache.org/session-management.html#SessionManagement-StatelessApplications%28Sessionless%29
@@ -38,12 +60,19 @@ public class ShiroConfig {
     }
 
     @Bean("shiroFilter")
-    public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager) {
+    public ShiroFilterFactoryBean factory(DefaultWebSecurityManager securityManager,
+                                          @Value("${myshiro.shiro.refreshTokenExpireTime}")
+                                                  Integer refreshTokenExpireTime,
+                                          @Value("${myshiro.shiro.jwt-cache-key}")
+                                                      String jwtCacheKeyPrefix) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
 
         // 添加自己的过滤器并且取名为jwt
         Map<String, Filter> filterMap = new HashMap<>();
-        filterMap.put("jwt", new JwtFilter());
+        JwtFilter jwtFilter = new JwtFilter();
+        jwtFilter.setRefreshTokenExpireTime(refreshTokenExpireTime);
+        jwtFilter.setJwtCacheKeyPrefix(jwtCacheKeyPrefix);
+        filterMap.put("jwt", jwtFilter);
         factoryBean.setFilters(filterMap);
 
         factoryBean.setSecurityManager(securityManager);

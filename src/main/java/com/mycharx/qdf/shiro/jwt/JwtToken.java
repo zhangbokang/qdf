@@ -1,4 +1,4 @@
-package com.mycharx.qdf.shiro;
+package com.mycharx.qdf.shiro.jwt;
 
 import org.apache.shiro.authc.AuthenticationToken;
 

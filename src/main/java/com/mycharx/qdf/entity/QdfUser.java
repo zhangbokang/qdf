@@ -58,7 +58,7 @@ public class QdfUser implements Serializable {
     @JsonView(SimpleUserView.class)
     private String tips;
     /**
-     * 状态 1:正常 2:禁用
+     * 状态 0:正常 1:禁用
      */
     @JsonView(SimpleUserView.class)
     private Integer state;
