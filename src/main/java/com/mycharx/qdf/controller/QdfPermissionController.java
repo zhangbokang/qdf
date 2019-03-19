@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.mycharx.qdf.entity.QdfPermission;
 import com.mycharx.qdf.entity.jsonview.SimpleUserView;
 import com.mycharx.qdf.service.QdfPermissionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author 张卜亢
  * @date 2019.03.14 23:32:50
  */
+@Slf4j
 @RestController
 @RequestMapping("/qdfpermission")
 public class QdfPermissionController {

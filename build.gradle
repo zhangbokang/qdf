@@ -36,6 +36,18 @@ dependencies {
 
     implementation 'com.alibaba:fastjson:1.2.47'
 
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+
+// JodConverter 4.1.0 + OpenOffice 4.1.4 文档转换
+    compile 'org.jodconverter:jodconverter-core:4.1.0'
+    compile 'org.jodconverter:jodconverter-local:4.1.0'
+    compile 'org.jodconverter:jodconverter-spring-boot-starter:4.1.0'
+    compile 'org.libreoffice:juh:5.4.2'
+    compile 'org.libreoffice:jurt:5.4.2'
+    compile 'org.libreoffice:ridl:5.4.2'
+    compile 'org.libreoffice:unoil:5.4.2'
+    compile 'com.google.code.gson:gson:2.8.2'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'

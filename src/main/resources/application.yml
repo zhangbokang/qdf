@@ -22,6 +22,15 @@ spring:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL5Dialect
 
+##################################################
+# JodConverter Configuration
+##################################################
+jodconverter:
+  enabled: true
+  officeHome: C:/Program Files (x86)/OpenOffice 4
+  portNumbers: 8100, 8101, 8102, 8103, 8104, 8105, 8106, 8107, 8108, 8109
+  maxTasksPerProcess: 10
+
 myshiro:
   #Redis服务器配置
   redis:
@@ -52,11 +61,11 @@ myshiro:
     # JWT认证加密私钥(Base64加密)
     encryptJWTKey: U0JBUElKV1RkV2FuZzkyNjQ1NA==
     # AccessToken过期时间-5分钟-5*60(秒为单位)
-    accessTokenExpireTime: 50
+    accessTokenExpireTime: 300
     # RefreshToken过期时间-30分钟-30*60(秒为单位)
-    refreshTokenExpireTime: 200
+    refreshTokenExpireTime: 1800
     # Shiro缓存过期时间-5分钟-5*60(秒为单位)(一般设置与AccessToken过期时间一致)
-    shiroCacheExpireTime: 50
+    shiroCacheExpireTime: 300
 
 #服务端口
 server:
@@ -110,11 +119,11 @@ myshiro:
     # JWT认证加密私钥(Base64加密)
     encryptJWTKey: U0JBUElKV1RkV2FuZzkyNjQ1NA==
     # AccessToken过期时间-5分钟-5*60(秒为单位)
-    accessTokenExpireTime: 50
+    accessTokenExpireTime: 300
     # RefreshToken过期时间-30分钟-30*60(秒为单位)
-    refreshTokenExpireTime: 200
+    refreshTokenExpireTime: 1800
     # Shiro缓存过期时间-5分钟-5*60(秒为单位)(一般设置与AccessToken过期时间一致)
-    shiroCacheExpireTime: 50
+    shiroCacheExpireTime: 300
 
 server:
   port: 8080
@@ -166,12 +175,12 @@ myshiro:
     encryptAESKey: V2FuZzkyNjQ1NGRTQkFQSUpXVA==
     # JWT认证加密私钥(Base64加密)
     encryptJWTKey: U0JBUElKV1RkV2FuZzkyNjQ1NA==
-    # AccessToken过期时间-5分钟-5*60(秒为单位)
-    accessTokenExpireTime: 50
-    # RefreshToken过期时间-30分钟-30*60(秒为单位)
-    refreshTokenExpireTime: 200
+    # AccessToken过期时间-5分钟-5*60(秒为单位)，客户端的token的过期时间，过期后再请求会收到一个新的token，下次请求带上新的token即可
+    accessTokenExpireTime: 300
+    # RefreshToken过期时间-30分钟-30*60(秒为单位)，过期后将从缓存中移除该token，客户端将需要重新登陆才能获取有效token并进行访问
+    refreshTokenExpireTime: 1800
     # Shiro缓存过期时间-5分钟-5*60(秒为单位)(一般设置与AccessToken过期时间一致)
-    shiroCacheExpireTime: 50
+    shiroCacheExpireTime: 300
 
 server:
   port: 8080

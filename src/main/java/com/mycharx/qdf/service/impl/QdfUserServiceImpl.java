@@ -6,6 +6,7 @@ import com.mycharx.qdf.repostory.QdfUserRepostory;
 import com.mycharx.qdf.service.QdfRoleService;
 import com.mycharx.qdf.service.QdfUserService;
 import com.mycharx.qdf.utils.BeanUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.mindrot.jbcrypt.BCrypt;
@@ -25,6 +26,7 @@ import java.util.Set;
  * @author 张卜亢
  * @date 2019.03.07 13:07:20
  */
+@Slf4j
 @Service
 public class QdfUserServiceImpl implements QdfUserService {
 
